@@ -5,15 +5,13 @@ MAINTAINER Thomas Schwery <thomas@inf3.ch>
 RUN apk add --no-cache --virtual .fetch-deps \
         python2 py2-pip curl wget unzip
 
-RUN curl -SL http://nzbget.net/info/nzbget-version-linux.json \
-    | grep "stable-download" \
-    | cut -d '"' -f 4 \
-    | xargs curl -SL -o /tmp/nzbget.run \
+ENV NZBGETVERSION 19.1
+
+RUN curl -SL \
+    https://github.com/nzbget/nzbget/releases/download/v${NZBGETVERSION}/nzbget-${NZBGETVERSION}-bin-linux.run \
+    -o /tmp/nzbget.run \
     && sh /tmp/nzbget.run --destdir /app \
     && rm /tmp/nzbget.run
-
-## Used to initialize the settings
-RUN pip install crudini
 
 ENV GROUPID 1000
 ENV USERID 1000
@@ -26,7 +24,10 @@ RUN adduser -S -G ${USERNAME} -u ${USERID} -s /bin/sh -h ${USER_HOME} ${USERNAME
 
 ADD start.sh /start.sh
 
+VOLUME ["/config"]
+VOLUME ["/downloads"]
+
 USER nzbget
 
 ENTRYPOINT ["/start.sh"]
-CMD ["/app/nzbget", "-c", "/home/nzbget/nzbget.conf", "-s", "-o", "outputmode=log"]
+CMD ["/app/nzbget", "-c", "/config/nzbget.conf", "-s", "-o", "outputmode=log"]
