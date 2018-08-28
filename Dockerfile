@@ -5,7 +5,7 @@ MAINTAINER Thomas Schwery <thomas@inf3.ch>
 RUN apk add --no-cache --virtual .fetch-deps \
         python2 py2-pip curl wget unzip
 
-ENV NZBGETVERSION 19.1
+ENV NZBGETVERSION 20.0
 
 RUN curl -SL \
     https://github.com/nzbget/nzbget/releases/download/v${NZBGETVERSION}/nzbget-${NZBGETVERSION}-bin-linux.run \
